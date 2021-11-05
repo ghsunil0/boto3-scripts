@@ -1,0 +1,36 @@
+'''
+#!/usr/bin/python3
+'''
+
+import boto3
+from random import choice
+
+def cr_iam_cli_object():
+    aws_man_con=boto3.session.Session(profile_name='sunil-admin', region_name='us-east-2')
+    iam_con_cli=aws_man_con.client  (service_name = 'iam', region_name = 'us-east-2')
+    return iam_con_cli
+
+def gen_random_pass():
+    pwd_length=8
+    pwd_valid_chars="abcdefghijklmnopqursuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*"
+    t_pass="".join(choice(pwd_valid_chars) for each_char in range(pwd_length))
+#    t_pass="T_pass_123$"
+    return t_pass
+
+def main():
+    iam_cli=cr_iam_cli_object()
+    iam_user_name="boto3-t2"
+    pass_wd=gen_random_pass()
+    policyArn="arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+
+    print ("iam user : ", iam_user_name  )
+    print ("pass wd  : ", pass_wd   )
+    print ("policy   : ", policyArn )
+
+    iam_cli.create_user(UserName=iam_user_name)
+    iam_cli.create_login_profile(UserName=iam_user_name,Password=pass_wd,PasswordResetRequired=False)
+    iam_cli.attach_user_policy(UserName=iam_user_name,PolicyArn=policyArn)
+    return None
+
+if __name__=="__main__" :
+    main()
