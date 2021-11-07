@@ -6,12 +6,14 @@ client = boto3.client('ec2')       # without the profile it will take default us
 # To apply filter you could have
 
 # filter by instance state 
-filt_1 = {'Name':"instance-state-name","Values":['running']}
-
 # filter by created tags 
-filt_2 = {'Name':"tag:env","Values":['prod']}
+# filter by availability_zone
 
-resp = client.describe_instances(Filters=[filt_2])
+filt_1 = {'Name':"instance-state-name","Values":['running']}
+filt_2 = {'Name':"tag:env","Values":['prod']}
+filt_3 = {'Name':"availability-zone","Values":['us-east-2a', 'us-east-2c']}
+
+resp = client.describe_instances(Filters=[filt_3])
 
 # resp = client.describe_instances()   # calling describe instances ()
 
