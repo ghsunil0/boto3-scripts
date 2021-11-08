@@ -20,10 +20,12 @@ sns_client = boto3.client('sns')    # This will use the default profile
 sns_arn = 'arn:aws:sns:us-east-2:860479642281:send_email'
 volumes = ec2_client.describe_volumes()
 
+vol_size=0
 unused_vols = []
 for volume in volumes['Volumes']:
     if len(volume['Attachments']) == 0:
         unused_vols.append(volume['VolumeId'])
+        vol_size=vol_size + volume['Size']
         print(volume)
         print("="*20)
 
@@ -32,6 +34,7 @@ email_body = "##### Unused Volumes ##### \n"
 for vol in unused_vols:
     email_body = email_body + "VolumeId = {} \n".format(vol)
 
+email_body = email_body + "Total unused volume size = {} MB \n".format(vol_size)
 # Send Email
 
 sns_client.publish(
