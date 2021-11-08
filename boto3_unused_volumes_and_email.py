@@ -34,7 +34,7 @@ email_body = "##### Unused Volumes ##### \n"
 for vol in unused_vols:
     email_body = email_body + "VolumeId = {} \n".format(vol)
 
-email_body = email_body + "Total unused volume size = {} MB \n".format(vol_size)
+email_body = email_body + "Total unused volume size = {} GB \n".format(vol_size)
 # Send Email
 
 sns_client.publish(
