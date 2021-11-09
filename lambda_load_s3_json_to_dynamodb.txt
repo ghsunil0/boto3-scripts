@@ -1,0 +1,35 @@
+import boto3
+import json
+
+#    Function Name : lambda_load_s3_json_to_dynamodb
+#    This funciton will be triggred whenever a .json file 
+#    is loaded in to the loading bucket. (emp-to-dynamodb) 
+#
+#    This script will take the bucket name and file name 
+#    from the event object 
+#
+#    The table name for the dynamod db is hard coaded and 
+#    the file will be loaded to dynamedb employee table. 
+# 
+
+
+s3_client = boto3.client('s3')
+dydb      = boto3.client('dynamodb')
+
+def lambda_handler(event, context):
+    
+    bucket_name      = event["Records"][0]["s3"]["bucket"]["name"]  
+    json_file_name   = event["Records"][0]["s3"]["object"]["key"]
+    
+    print ("Bucket Name = {} ".format(bucket_name     ))
+    print ("File   Name = {} ".format(json_file_name  ))
+
+    json_object     = s3_client.get_object(Bucket=bucket_name,Key=json_file_name)
+    print ("json_object created " )
+
+    jsonFileReader  = json_object['Body'].read()
+    jsonDict        = json.loads(jsonFileReader)
+    table           = dydb.Table('Employees')
+    table.put_item(Item=json_dict)
+    
+    
